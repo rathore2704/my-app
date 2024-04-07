@@ -47,10 +47,10 @@ export const Table = (props) => {
     });
 
     const PDF = {
-        fullName: props.fullName,
-        address: props.address,
-        PhoneNumber: props.phoneNumber,
-        email: props.email
+        fullName: "deepak",
+        address: "kanpur",
+        PhoneNumber: "45556",
+        email: "gggg@.com"
     }
 
     console.log("pdf...", PDF)
@@ -386,6 +386,8 @@ export const Table = (props) => {
                         </table>
                         {/* <button type="button" onClick={this.submitPost} className="btn btn-primary btn-lg">Submit</button> */}
                     </form>
+
+                    <PDF />
 
 
                 </div>
