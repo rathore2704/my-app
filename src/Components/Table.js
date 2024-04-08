@@ -7,10 +7,10 @@ import EditTableRow from './EditTableRow';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 //import { Page } from '@react-pdf/renderer';
-//import { Page, Text, View, Document, StyleSheet, PDFViewer } from '@react-pdf/renderer';
+import { Page, Text, View, Document, StyleSheet, PDFViewer } from '@react-pdf/renderer';
 
 //import jsPDF from 'jspdf';
-import PDF from './PDF';
+//import PDF from './PDF';
 
 
 
@@ -20,9 +20,6 @@ import '../App.css';
 
 export const Table = (props) => {
 
-    // const styleBox = {
-
-    // };
 
     const location = useLocation();
     const { selectedValue1, selectedValue2, selectedValue3 } = location.state;
@@ -57,38 +54,10 @@ export const Table = (props) => {
 
 
 
-//    const state = {
-//         selectedValue1: selectedValue1,
-//         selectedValue2: selectedValue2,
-//         selectedValue3: selectedValue3,
-//         fullName: '',
-//         address: '',
-//         phoneNumber: '',
-//         email: '',
-//         postSubmitted: false
-//     }
-
-//   const  onChange = input => e => {
-//         this.setState({
-//             [input]: e.target.value
-//         });
-//     }
-
-    // const submitPost = (e) => {
-
-    //     if (!this.state.title || !this.state.content) {
-    //         alert('All fields are required!');
-    //         e.preventDefault();
-    //     } else {
-    //         this.setState({
-    //             postSubmitted: true
-    //         });
-    //     }
-    // }
 
     const [edtContactId, setEditContactId] = useState(null);
 
-    //const [showPDF, setShowPDF] = useState(false);
+
 
     const handleAddFormChange = event => {
         event.preventDefault()
@@ -96,8 +65,7 @@ export const Table = (props) => {
         const fieldName = event.target.name;
         const fieldValue = event.target.value;
 
-        // const newFormData = { ...addFormData }
-        // newFormData[fieldName] = fieldValue
+
 
         setAddFormData({ ...addFormData, [fieldName]: fieldValue })
     };
@@ -110,8 +78,7 @@ export const Table = (props) => {
         const fieldName = event.target.name;
         const fieldValue = event.target.value;
 
-        // const newFormData = { ...editFormData };
-        // newFormData[fieldName] = fieldValue;
+
 
         setEditFormData({ ...editFormData, [fieldName]: fieldValue });
     }
@@ -127,8 +94,8 @@ export const Table = (props) => {
             email: addFormData.email
         };
 
-        //const newContacts = [...contacts, newContact];
-        setContacts( [...contacts, newContact]);
+
+        setContacts([...contacts, newContact]);
     };
 
     const handleEditFormSubmit = (event) => {
@@ -146,9 +113,7 @@ export const Table = (props) => {
             contact.id === edtContactId ? editedContact : contact
         );
 
-        // const index = contacts.findIndex((contact) => contact.id === edtContactId);
 
-        // newContacts[index] = editedContact;
 
         setContacts(newContacts);
 
@@ -178,16 +143,55 @@ export const Table = (props) => {
         const newContacts = contacts.filter(contact => contact.id !== contactId);
         setContacts(newContacts);
 
-        // const index = contacts.findIndex((contact) => contact.id === contactId);
 
-        // newContacts.splice(index, 1);
-
-        //setContacts(newContacts);
     };
 
-    // const handlePDFGenerate = () => {
-    //     setShowPDF(true);
-    // };
+
+
+    const generatePDF = () => {
+        const doc = (
+            <Document>
+                <Page size="A4">
+                    <View>
+                        <Text>{selectedValue1}</Text>
+                        <Text>{selectedValue2}</Text>
+                        <Text>{selectedValue3}</Text>
+                        <Text></Text>
+                        <Text>Contact Details</Text>
+                        {contacts.map(contact => (
+                            <Fragment>
+                                <Text>{contact.fullName}</Text>
+                                <Text>{contact.address}</Text>
+                                <Text>{contact.phoneNumber}</Text>
+                                <Text>{contact.email}</Text>
+                                <Text></Text>
+                            </Fragment>
+                        ))}
+                    </View>
+                </Page>
+            </Document>
+        );
+
+
+
+
+        // Render the PDF content
+        const pdf = <PDFViewer width="100%" height="100%"> {doc} </PDFViewer>;
+
+        // Create a Blob from the PDF content
+        const blob = new Blob([pdf], { type: 'application/pdf' });
+
+        // Create a URL for the Blob
+        const url = URL.createObjectURL(blob);
+
+        // Download the PDF
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'contacts.pdf';
+        link.click();
+
+    }
+
 
 
     // const generatePDF = () => {
@@ -220,7 +224,11 @@ export const Table = (props) => {
     //         </Document>
     //     );
 
-    //     const pdfBlob = PDFViewer.renderToBlob(doc);
+    //     // Render the PDF document to a blob
+
+    //     const pdfBlob = PDF.renderToBlob(doc, { format: 'a4' });
+
+
 
     //     // Save the PDF blob to the local drive
     //     const url = window.URL.createObjectURL(pdfBlob);
@@ -230,170 +238,171 @@ export const Table = (props) => {
     //     document.body.appendChild(a);
     //     a.click();
     //     document.body.removeChild(a);
+
+    //     // create PDFViewer
+
+    //     const PDFViewer = () => {
+    //         return (
+    //             <PDFViewer style={{ width: '100%', height: '100%' }}>
+    //                 <Document file={pdfBlob} />
+    //             </PDFViewer>
+    //         );
+
+
+    //     }
+
+    //     console.log("PDFBlob....", pdfBlob);
+
+    //     console.log("Doc...", doc)
+
+
     // };
 
-    // //Styles for PDF document
-    // const styles = StyleSheet.create({
-    //     header: {
-    //         textAlign: 'center',
-    //         marginBottom: 10,
-    //     },
-    //     headerText: {
-    //         fontSize: 20,
-    //         fontWeight: 'bold',
-    //     },
-    //     table: {
-    //         display: 'table',
-    //         width: 'auto',
-    //         borderStyle: 'solid',
-    //         borderWidth: 1,
-    //         borderRightWidth: 0,
-    //         borderBottomWidth: 0,
-    //     },
-    //     row: {
-    //         flexDirection: 'row',
-    //         borderBottomWidth: 1,
-    //     },
-    //     headerCell: {
-    //         margin: 5,
-    //         fontSize: 12,
-    //         fontWeight: 'bold',
-    //     },
-    //     cell: {
-    //         margin: 5,
-    //         fontSize: 10,
-    //     },
-    // });
 
 
-    // const generatePDF = () => {
-    //     const doc = new jsPDF();
+    // console.log("GeneratePDF....", generatePDF);
 
 
-    //     let y = 20;
 
-    //     doc.text(20, y, 'Contact Details');
-    //     y += 10;
-    //     doc.text(20, y, selectedValue1);
-    //     y += 10;
-    //     doc.text(20, y, selectedValue2);
-    //     y += 10;
-    //     doc.text(20, y, selectedValue3);
-    //     y += 20;
+    // console.log("PDFViewer....", PDFViewer);
 
-    //     doc.autoTable({
-    //         head: [['Name', 'Address', 'Phone Number', 'Email']],
-    //         body: contacts.map((contact) => [
-    //             contact.fullName,
-    //             contact.address,
-    //             contact.phoneNumber,
-    //             contact.email,
-    //         ]),
-    //     });
-    //     console.log('PDF generated', doc);
+    //Styles for PDF document
+    const styles = StyleSheet.create({
+        header: {
+            textAlign: 'center',
+            marginBottom: 10,
+        },
+        headerText: {
+            fontSize: 20,
+            fontWeight: 'bold',
+        },
+        table: {
+            display: 'table',
+            width: 'auto',
+            borderStyle: 'solid',
+            borderWidth: 1,
+            borderRightWidth: 0,
+            borderBottomWidth: 0,
+        },
+        row: {
+            flexDirection: 'row',
+            borderBottomWidth: 1,
+        },
+        headerCell: {
+            margin: 5,
+            fontSize: 12,
+            fontWeight: 'bold',
+        },
+        cell: {
+            margin: 5,
+            fontSize: 10,
+        },
+    });
 
 
-    //     doc.save('contact_details.pdf');
 
-    // };
 
 
 
     return (
         <>
-            
-                (<div className=' container app-container'>
+
+            (<div className=' container app-container'>
 
 
-                    <h2 style={{ textAlign: 'center' }}>Page table</h2>
+                <h2 style={{ textAlign: 'center' }}>Page table</h2>
 
-                    <div className='page-table' >
-
-
-                        <input type="text" value={selectedValue1} readOnly />
-
-                        <input type="text" value={selectedValue2} readOnly />
-
-                        <input type="text" value={selectedValue3} readOnly />
-                        <button onClick={() => navigate('/')}>Back To Home</button>
-                        {/* <button onClick={handlePDFGenerate}>Download PDF</button> */}
-
-                        {/* <button onClick={generatePDF}>Download PDF</button>  */}
-                    </div>
-
-                    <br />
-
-                    <h2>Add a new contact</h2>
-                    <form className='add-form' onSubmit={handleAddFormSubmit}>
-                        <input
-                            onChange={handleAddFormChange}
-                            type='text'
-                            placeholder='Enter FullName'
-                            required='required'
-                            name='fullName'
-                        />
-                        <input
-                            onChange={handleAddFormChange}
-                            type='text'
-                            placeholder='Enter Address'
-                            required='required'
-                            name='address'
-                        />
-                        <input
-                            onChange={handleAddFormChange}
-                            type='text'
-                            placeholder='Enter PhoneNumber'
-                            required='required'
-                            name='phoneNumber'
-                        />
-                        <input
-                            onChange={handleAddFormChange}
-                            type='text'
-                            placeholder='Enter Email'
-                            required='required'
-                            name='email'
-                        />
-                        <button onClick={handleAddFormSubmit} type='submit'>Add</button>
-                    </form>
-
-                    <br />
-
-                    <form className='form' onSubmit={handleEditFormSubmit} >
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Address</th>
-                                    <th>Phone Number</th>
-                                    <th>Email</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {contacts.map(contact => (
-                                    <Fragment>
+                <div className='page-table' >
 
 
-                                        {edtContactId === contact.id ? (
-                                            <EditTableRow editFormData={editFormData} handleEditFormChange={handleEditFormChange} handleCancelClick={handleCancelClick} />
-                                        ) : (<ReadOnlyRow contact={contact}
-                                            handleDeleteClick={handleDeleteClick}
-                                            handleEditClick={handleEditClick} />)}
+                    <input type="text" value={selectedValue1} readOnly />
 
-                                    </Fragment>
-                                ))}
-                            </tbody>
-                        </table>
-                        {/* <button type="button" onClick={this.submitPost} className="btn btn-primary btn-lg">Submit</button> */}
-                    </form>
+                    <input type="text" value={selectedValue2} readOnly />
 
-                    <PDF />
+                    <input type="text" value={selectedValue3} readOnly />
+                    <button onClick={() => navigate('/')}>Back To Home</button>
+                    {/* <button onClick={handlePDFGenerate}>Download PDF</button> */}
 
-
+                    <button onClick={generatePDF}>Download PDF</button>
                 </div>
-                ) 
 
-            
+                <br />
+
+                <h2>Add a new contact</h2>
+                <form className='add-form' onSubmit={handleAddFormSubmit}>
+                    <input
+                        onChange={handleAddFormChange}
+                        type='text'
+                        placeholder='Enter FullName'
+                        required='required'
+                        name='fullName'
+                    />
+                    <input
+                        onChange={handleAddFormChange}
+                        type='text'
+                        placeholder='Enter Address'
+                        required='required'
+                        name='address'
+                    />
+                    <input
+                        onChange={handleAddFormChange}
+                        type='text'
+                        placeholder='Enter PhoneNumber'
+                        required='required'
+                        name='phoneNumber'
+                    />
+                    <input
+                        onChange={handleAddFormChange}
+                        type='text'
+                        placeholder='Enter Email'
+                        required='required'
+                        name='email'
+                    />
+                    <button onClick={handleAddFormSubmit} type='submit'>Add</button>
+                </form>
+
+                <br />
+
+                <form className='form' onSubmit={handleEditFormSubmit} >
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Address</th>
+                                <th>Phone Number</th>
+                                <th>Email</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {contacts.map(contact => (
+                                <Fragment>
+
+
+                                    {edtContactId === contact.id ? (
+                                        <EditTableRow editFormData={editFormData} handleEditFormChange={handleEditFormChange} handleCancelClick={handleCancelClick} />
+                                    ) : (<ReadOnlyRow contact={contact}
+                                        handleDeleteClick={handleDeleteClick}
+                                        handleEditClick={handleEditClick} />)}
+
+                                </Fragment>
+                            ))}
+                        </tbody>
+                    </table>
+                    {/* <button type="button" onClick={this.submitPost} className="btn btn-primary btn-lg">Submit</button> */}
+                </form>
+
+                {/* <PDF styles={styles} fullName={this.state.fullName} address={this.state.address} phoneNumber={this.state.phoneNumber} email={this.state.email} /> 
+                <PDFViewer style={{ width: '100%', height: '100%' }} /> */}
+
+
+
+
+
+            </div>
+            )
+
+
 
         </>
     )
