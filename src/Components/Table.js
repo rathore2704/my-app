@@ -8,7 +8,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 //import { Page } from '@react-pdf/renderer';
 import { Page, Text, View, Document, StyleSheet, PDFViewer } from '@react-pdf/renderer';
-
+import PdfGenerator from './PdfRenderer';
 //import jsPDF from 'jspdf';
 //import PDF from './PDF';
 
@@ -315,17 +315,22 @@ export const Table = (props) => {
                 <div className='page-table' >
 
 
-                    <input type="text" value={selectedValue1} readOnly />
-
-                    <input type="text" value={selectedValue2} readOnly />
-
+                    <input type="text" value={selectedValue1} readOnly /> 
+                    <input type="text" value={selectedValue2} readOnly /> 
                     <input type="text" value={selectedValue3} readOnly />
                     <button onClick={() => navigate('/')}>Back To Home</button>
                     {/* <button onClick={handlePDFGenerate}>Download PDF</button> */}
 
                     <button onClick={generatePDF}>Download PDF</button>
                 </div>
-
+                <div>
+                <h1>PDF Generator Example</h1>
+                <PdfGenerator>
+                    <h2>Sample PDF Content</h2>
+                    <p>This is a sample PDF generated from React.</p>
+                    <p>Hard-coded content goes here...</p>
+                </PdfGenerator>
+                </div>
                 <br />
 
                 <h2>Add a new contact</h2>
