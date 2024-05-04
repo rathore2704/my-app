@@ -1281,3 +1281,65 @@
 
 
 // improve the above code such that in creating the pdf
+
+
+
+
+const generatePdf = async () => {
+    const content = contentRef.current;
+  
+    if (!content) {
+      console.error("PDF content element not found");
+      return;
+    }
+  
+    try {
+      const canvas = await html2canvas(content, { scrollY: -window.scrollY });
+      const imgData = canvas.toDataURL("image/png");
+      const doc = new jsPDF();
+  
+      // Add additional information
+      doc.setFontSize(12);
+  
+      // Align and style the selected values horizontally
+      const x = 40; // Starting x position
+      const xOffset = 50; // Horizontal offset between values
+      const lineHeight = 2; // Line height between values
+      let y = 30; // Starting y position
+  
+      doc.setFont("helvetica", "bold");
+      doc.text("MP & AD Enterprise", x + 40, y - 20);
+  
+      doc.setFont("helvetica", "normal");
+  
+      // Calculate the number of entries per page
+      const entriesPerPage = 40;
+      const totalPages = Math.ceil(children.length / entriesPerPage);
+  
+      let currentPage = 1;
+      let remainingEntries = children.length;
+  
+      for (let i = 0; i < children.length; i += entriesPerPage) {
+        // Add entries for the current page
+        const currentPageEntries = children.slice(i, i + entriesPerPage);
+        currentPageEntries.forEach((entry, index) => {
+          const tableRow = `${entry.serialNumber}, ${entry.ubin}, ${entry.receivedMessage}, ${entry.time}`;
+          doc.text(tableRow, x, y + lineHeight * index);
+        });
+  
+        // Add the table image for the current page
+        if (currentPage !== totalPages) {
+          doc.addPage();
+        }
+  
+        y = 10; // Reset y position for the next page
+        currentPage++;
+        remainingEntries -= currentPageEntries.length;
+      }
+  
+      doc.save("sample.pdf");
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+    }
+  };
+  
