@@ -44,30 +44,31 @@ const PdfGenerator = ({ children }) => {
       // calculate the number of entries per page
 
       const entriesPerPage = 40;
-      const totalPages = Math.ceil(children.length / entriesPerPage);
 
       let currentPage = 1;
-      let remainingEntries = children.length;
+      // let remainingEntries = children.length;
 
-      for(let i = 0; i < children.length; i+=entriesPerPage) {
-        // Add entries to the current page
+      // Iterate over children array and add pages as needed
+      for (let i = 0; i < children.length; i += entriesPerPage) {
+        // Slice the children array to get entries for the current page
         const currentPageEntries = children.slice(i, i + entriesPerPage);
-        currentPageEntries.forEach((entry, index) => {
-          const tableRow = `${entry.serialNumber}, ${entry.ubin}, ${entry.receivedMessage}, ${entry.time}`;
-          doc.text(tableRow, x, y + lineHeight * index);
-        });
 
-         // Add the table image for the current page
-      if (currentPage !== totalPages) {
-        doc.addPage();
+       
+
+         // Add entries to the current page
+        currentPageEntries.forEach((entry, index) => {
+          doc.addImage(imgData, "PNG", x, index * lineHeight + 10, 180, 0);
+          entry.forEach((value, index) => {
+            doc.text(`${value}`, x, index * lineHeight + 10);
+
+            doc.addPage();
+          
+          });
+        });
+        currentPage++;
       }
 
-      y = 10; // Reset y position for the next page
-      currentPage++;
-      remainingEntries -= currentPageEntries.length;
-    }
- 
-      doc.addImage(imgData, "PNG", 10, y + 3 * lineHeight, 180, 0);
+      //doc.addImage(imgData, "PNG", 20, y + 10 * lineHeight, 180, 0);
 
       doc.save("sample.pdf");
     } catch (error) {
