@@ -56,15 +56,27 @@ const PdfGenerator = ({ children }) => {
        
 
          // Add entries to the current page
-        currentPageEntries.forEach((entry, index) => {
-          doc.addImage(imgData, "PNG", x, index * lineHeight + 10, 180, 0);
-          entry.forEach((value, index) => {
-            doc.text(`${value}`, x, index * lineHeight + 10);
-
-            doc.addPage();
+        // currentPageEntries.forEach((entry, index) => {
+        //   //doc.addImage(imgData, "PNG", x, index * lineHeight + 10, 180, 0);
           
-          });
+        //   entry.forEach((value, index) => {
+        //     doc.addImage(imgData, "PNG", 20, y + 10 * lineHeight, 180, 0);
+        //    // doc.text(`${value}`, x, index * lineHeight + 10);
+
+        //     doc.addPage();
+          
+        //   });
+        // });
+
+         // Add entries to the current page
+         currentPageEntries.forEach((entry, index) => {
+          doc.text(`${entry}`, x, y + (index + 1) * lineHeight);
+          if ((index + 1) % entriesPerPage === 0) {
+            doc.addPage();
+          }
         });
+
+        
         currentPage++;
       }
 
