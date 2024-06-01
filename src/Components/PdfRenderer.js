@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef , ReactDOM } from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { useLocation } from "react-router-dom";
@@ -19,70 +19,61 @@ const PdfGenerator = ({ children }) => {
     }
   
     try {
-      const canvas = await html2canvas(content, {scrollY: -window.scrollY});
-      const imgData = canvas.toDataURL("image/png");
-      const doc = new jsPDF();
-  
-      // Add additional information
-      doc.setFontSize(12);
-  
-      // Align and style the selected values horizontally
-      const x = 40; // Starting x position
-      const y = 30; // Starting y position
-      const xOffset = 50; // Horizontal offset between values
-      const lineHeight = 2; // Line height between values
-      
-      doc.setFont("helvetica", "bold");
-      doc.text("MP & AD Enterprise", x + 40, y - 20);
 
-      doc.setFont("helvetica", "normal");
-  
-      doc.text(`${selectedValue1}`, x, y);
-      doc.text(`${selectedValue2}`, x + xOffset, y);
-      doc.text(`${selectedValue3}`, x + 2 * xOffset, y);
-
-      // calculate the number of entries per page
-
-      const entriesPerPage = 40;
-
-      let currentPage = 1;
-      // let remainingEntries = children.length;
-
-      // Iterate over children array and add pages as needed
-      for (let i = 0; i < children.length; i += entriesPerPage) {
-        // Slice the children array to get entries for the current page
-        const currentPageEntries = children.slice(i, i + entriesPerPage);
-
-       
-
-         // Add entries to the current page
-        // currentPageEntries.forEach((entry, index) => {
-        //   //doc.addImage(imgData, "PNG", x, index * lineHeight + 10, 180, 0);
-          
-        //   entry.forEach((value, index) => {
-        //     doc.addImage(imgData, "PNG", 20, y + 10 * lineHeight, 180, 0);
-        //    // doc.text(`${value}`, x, index * lineHeight + 10);
-
-        //     doc.addPage();
-          
-        //   });
-        // });
-
-         // Add entries to the current page
-         currentPageEntries.forEach((entry, index) => {
-          doc.text(`${entry}`, x, y + (index + 1) * lineHeight);
-          if ((index + 1) % entriesPerPage === 0) {
-            doc.addPage();
-          }
-        });
-
-        
-        currentPage++;
+      if (!content) {
+        console.error("PDF content element not found");
+        return;
       }
+      //const data = React.cloneElement(content, { key: Date.now() });
+      // const frame = document.createElement('div');
+      // document.body.appendChild(frame);
+      // ReactDOM.render(<div>{data}</div>, frame);
+      // const actionCells = frame.querySelectorAll('td:last-child');
+      // actionCells.forEach(cell => cell.remove());
+      // ReactDOM.unmountComponentAtNode(frame);
+      // document.body.removeChild(frame);
 
-      //doc.addImage(imgData, "PNG", 20, y + 10 * lineHeight, 180, 0);
 
-      doc.save("sample.pdf");
+      const canvas = await html2canvas(content, {scrollY: -window.scrollY});
+      const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+                const imgProps = pdf.getImageProperties(imgData);
+                const imgWidth = pdfWidth - 8; // accounting for 4-unit margins on left and right
+                const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+                const margin = 4; // 4-unit margins top and bottom
+
+                let heightLeft = imgHeight;
+                let position = margin + 20; // Start after margin and header
+
+                function addHeader(pdf, pageNumber) {
+                    pdf.setFont("helvetica", "bold");
+                    pdf.text("MP & AD Enterprise", 50, 10);
+
+                    pdf.setFont("helvetica", "normal");
+                    const xOffset = 60;
+                    pdf.text(`${selectedValue1}`, 10, 20);
+                    pdf.text(`${selectedValue2}`, 10 + xOffset, 20);
+                    pdf.text(`${selectedValue3}`, 10 + 2 * xOffset, 20);
+                }
+
+                addHeader(pdf, 1);
+                pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+                heightLeft -= (pdfHeight - position - margin);
+
+                let pageNumber = 2;
+                while (heightLeft >= 0) {
+                    pdf.addPage();
+                    addHeader(pdf, pageNumber);
+                    position = margin + 20; // Reset position for new page
+                    pdf.addImage(imgData, 'PNG', margin, position - heightLeft, imgWidth, imgHeight);
+                    heightLeft -= (pdfHeight - margin * 2 - 20); // Account for top and bottom margins and header
+                    pageNumber++;
+                }
+
+                pdf.save('sample.pdf');
+        
     } catch (error) {
       console.error("Error generating PDF:", error);
     }
