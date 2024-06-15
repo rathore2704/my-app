@@ -4,6 +4,7 @@ export const ReadOnlyRow = ({ contact, handleEditClick, handleDeleteClick }) => 
     return (
         <>
             <tr>
+                <td>{contact.serialNumber}</td>
                 <td>{contact.fullName}</td>
                 <td>{contact.address}</td>
                 <td>{contact.phoneNumber}</td>

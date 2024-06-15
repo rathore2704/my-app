@@ -16,8 +16,7 @@ import {
   PDFViewer,
 } from "@react-pdf/renderer";
 import PdfGenerator from "./PdfRenderer";
-//import jsPDF from 'jspdf';
-//import PDF from './PDF';
+
 
 import "../App.css";
 
@@ -26,9 +25,11 @@ export const Table = (props) => {
   const { selectedValue1, selectedValue2, selectedValue3 } = location.state;
 
   const navigate = useNavigate();
+  const [serialNumber, setSerialNumber] = useState(1)
   const [contacts, setContacts] = useState(data);
 
   const [addFormData, setAddFormData] = useState({
+    serialNumber: "",
     fullName: "",
     address: "",
     phoneNumber: "",
@@ -36,6 +37,7 @@ export const Table = (props) => {
   });
 
   const [editFormData, setEditFormData] = useState({
+    serialNumber: "",
     fullName: "",
     address: "",
     phoneNumber: "",
@@ -43,6 +45,7 @@ export const Table = (props) => {
   });
 
   const PDF = {
+    serialNumber: "1",
     fullName: "deepak",
     address: "kanpur",
     PhoneNumber: "45556",
@@ -76,13 +79,16 @@ export const Table = (props) => {
 
     const newContact = {
       id: nanoid(),
+      serialNumber:serialNumber,
       fullName: addFormData.fullName,
       address: addFormData.address,
       phoneNumber: addFormData.phoneNumber,
       email: addFormData.email,
     };
-
+    
     setContacts([...contacts, newContact]);
+    setSerialNumber(serialNumber + 1); // Increment serial number
+    console.log("serial number", serialNumber);
   };
 
   const handleEditFormSubmit = (event) => {
@@ -90,6 +96,7 @@ export const Table = (props) => {
 
     const editedContact = {
       id: edtContactId,
+      serialNumber: editFormData.serialNumber,
       fullName: editFormData.fullName,
       address: editFormData.address,
       phoneNumber: editFormData.phoneNumber,
@@ -110,6 +117,7 @@ export const Table = (props) => {
     setEditContactId(contact.id);
 
     const formValues = {
+      serialNumber: contact.serialNumber,
       fullName: contact.fullName,
       address: contact.address,
       phoneNumber: contact.phoneNumber,
@@ -140,6 +148,7 @@ export const Table = (props) => {
             <Text>Contact Details</Text>
             {contacts.map((contact) => (
               <Fragment>
+                <Text>{contact.serialNumber}</Text>
                 <Text>{contact.fullName}</Text>
                 <Text>{contact.address}</Text>
                 <Text>{contact.phoneNumber}</Text>
@@ -172,70 +181,6 @@ export const Table = (props) => {
     link.download = "contacts.pdf";
     link.click();
   };
-
-  // const generatePDF = () => {
-  //     const doc = (
-  //         <Document>
-  //             <Page size="A4">
-  //                 <View style={styles.header}>
-  //                     <Text style={styles.headerText}>Contact Details</Text>
-  //                     <Text>{selectedValue1}</Text>
-  //                     <Text>{selectedValue2}</Text>
-  //                     <Text>{selectedValue3}</Text>
-  //                 </View>
-  //                 <View style={styles.table}>
-  //                     <View style={styles.row}>
-  //                         <Text style={styles.headerCell}>Name</Text>
-  //                         <Text style={styles.headerCell}>Address</Text>
-  //                         <Text style={styles.headerCell}>Phone Number</Text>
-  //                         <Text style={styles.headerCell}>Email</Text>
-  //                     </View>
-  //                     {contacts.map(contact => (
-  //                         <View style={styles.row} key={contact.id}>
-  //                             <Text style={styles.cell}>{contact.fullName}</Text>
-  //                             <Text style={styles.cell}>{contact.address}</Text>
-  //                             <Text style={styles.cell}>{contact.phoneNumber}</Text>
-  //                             <Text style={styles.cell}>{contact.email}</Text>
-  //                         </View>
-  //                     ))}
-  //                 </View>
-  //             </Page>
-  //         </Document>
-  //     );
-
-  //     // Render the PDF document to a blob
-
-  //     const pdfBlob = PDF.renderToBlob(doc, { format: 'a4' });
-
-  //     // Save the PDF blob to the local drive
-  //     const url = window.URL.createObjectURL(pdfBlob);
-  //     const a = document.createElement('a');
-  //     a.href = url;
-  //     a.download = 'contact_details.pdf';
-  //     document.body.appendChild(a);
-  //     a.click();
-  //     document.body.removeChild(a);
-
-  //     // create PDFViewer
-
-  //     const PDFViewer = () => {
-  //         return (
-  //             <PDFViewer style={{ width: '100%', height: '100%' }}>
-  //                 <Document file={pdfBlob} />
-  //             </PDFViewer>
-  //         );
-
-  //     }
-
-  //     console.log("PDFBlob....", pdfBlob);
-
-  //     console.log("Doc...", doc)
-
-  // };
-
-  // console.log("GeneratePDF....", generatePDF);
-
-  // console.log("PDFViewer....", PDFViewer);
 
   //Styles for PDF document
   const styles = StyleSheet.create({
@@ -335,6 +280,7 @@ export const Table = (props) => {
               <table>
                 <thead>
                   <tr>
+                    <th>serialNumber</th>
                     <th>Name</th>
                     <th>Address</th>
                     <th>Phone Number</th>
@@ -373,3 +319,5 @@ export const Table = (props) => {
 };
 
 export default Table;
+
+// improve the following code such that as the entries in the table should contain the 

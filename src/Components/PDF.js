@@ -11,6 +11,9 @@ const PDF = (props) => {
                 <h1>{props.phoneNumber}</h1>
                 <h1>{props.email}</h1>
             </div>
+            <br/>
+            <br/>
+            <hr/>
 
             <Pdf targetRef={ref} filename="code-example.pdf">
                 {({ toPdf }) => <button onClick={toPdf}>Generate Pdf</button>}
